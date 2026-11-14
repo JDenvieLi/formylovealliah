@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="media/Envelope.jpg">
+    <title>Liah & Denvie</title>
+    <style>
+        /* --- Google Fonts --- */
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;1,600&family=Poppins:wght@400;500;600&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Poppins', Arial, sans-serif;
+            background-color: #e683ac;
+            background: #f4abe3;
+            background: linear-gradient(315deg, #f4abe3 0%, #f49ac9 100%);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- Floating Hearts Container --- */
+        .hearts-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 10;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            bottom: -50px;
+            background-color: #e63946;
+            display: inline-block;
+            height: 20px;
+            width: 20px;
+            transform: rotate(-45deg);
+            opacity: 0;
+            animation: floatUp linear infinite;
+        }
+
+        .heart::before,
+        .heart::after {
+            content: "";
+            background-color: inherit;
+            border-radius: 50%;
+            height: 20px;
+            position: absolute;
+            width: 20px;
+        }
+
+        .heart::before {
+            top: -10px;
+            left: 0;
+        }
+
+        .heart::after {
+            left: 10px;
+            top: 0;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) translateX(0) rotate(-45deg) scale(0.8);
+                opacity: 0;
+            }
+            15% {
+                opacity: 0.85;
+            }
+            50% {
+                transform: translateY(-50vh) translateX(25px) rotate(-35deg) scale(1);
+            }
+            85% {
+                opacity: 0.85;
+            }
+            100% {
+                transform: translateY(-115vh) translateX(-25px) rotate(-55deg) scale(1.1);
+                opacity: 0;
+            }
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-duration: 7s; animation-delay: 0s; background-color: #ff4d6d; }
+        .heart:nth-child(2) { left: 25%; animation-duration: 9s; animation-delay: 2s; background-color: #c9184a; }
+        .heart:nth-child(3) { left: 40%; animation-duration: 6s; animation-delay: 4s; background-color: #ff758f; }
+        .heart:nth-child(4) { left: 55%; animation-duration: 10s; animation-delay: 1s; background-color: #a4133c; }
+        .heart:nth-child(5) { left: 70%; animation-duration: 8s; animation-delay: 3s; background-color: #ff4d6d; }
+        .heart:nth-child(6) { left: 85%; animation-duration: 7.5s; animation-delay: 5s; background-color: #ff8fa3; }
+        .heart:nth-child(7) { left: 18%; animation-duration: 11s; animation-delay: 6s; background-color: #c9184a; }
+        .heart:nth-child(8) { left: 78%; animation-duration: 6.5s; animation-delay: 2.5s; background-color: #ff758f; }
+
+        /* --- Page 1: Opening Screen (Envelope) --- */
+        #opening-screen {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .envelope-link {
+            display: inline-block;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.35s ease, filter 0.35s ease;
+            animation: pulseEnvelope 2.5s ease-in-out infinite;
+        }
+
+        .envelope-link img {
+            width: 320px;
+            max-width: 85vw;
+            height: auto;
+            filter: drop-shadow(0 10px 20px rgba(164, 19, 60, 0.25));
+            transition: filter 0.35s ease;
+        }
+
+        .envelope-link:hover {
+            transform: scale(1.12) translateY(-5px);
+        }
+
+        .envelope-link:hover img {
+            filter: drop-shadow(0 15px 30px rgba(164, 19, 60, 0.45));
+        }
+
+        @keyframes pulseEnvelope {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.02); }
+        }
+
+        .tap-instruction {
+            margin-top: 20px;
+            color: #7209b7;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(255, 255, 255, 0.8);
+            letter-spacing: 0.5px;
+            animation: fadeInOut 2s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
+        }
+
+        /* --- Page 2: Letter Screen --- */
+        #letter-screen {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+            width: 100%;
+            height: 100%;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 30px;
+            max-width: 1200px;
+            width: 100%;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Side Images Container */
+        .side-decorations {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .side-image {
+            width: 130px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 255, 255, 0.8);
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .side-image:hover {
+            transform: scale(1.05);
+        }
+
+        /* Paper Background */
+        .paper-background {
+            background-image: url('media/PaperGradient.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: center top;
+
+            width: 90vw;
+            max-width: 500px;
+            min-height: 75vh;
+
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border-radius: 12px;
+            padding: 35px 30px;
+            box-sizing: border-box;
+
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            transition: transform 0.35s ease, box-shadow 0.35s ease;
+        }
+
+        .paper-background:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        /* Designed Letter Styling */
+        .message-container {
+            text-align: center;
+            width: 100%;
+            max-width: 92%;
+            line-height: 1.75;
+            background: rgba(255, 245, 248, 0.45);
+            padding: 25px 20px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255, 255, 255, 0.65);
+            box-shadow: 0 4px 15px rgba(164, 19, 60, 0.08);
+            box-sizing: border-box;
+        }
+
+        .message-container h3 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.9rem;
+            color: #9d174d;
+            margin: 0 0 10px 0;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+        }
+
+        .message-container p:nth-of-type(1) {
+            display: inline-block;
+            background: linear-gradient(135deg, #ff4d6d, #c9184a);
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin: 0 0 18px 0;
+            box-shadow: 0 3px 8px rgba(201, 24, 74, 0.25);
+        }
+
+        .message-container p:nth-of-type(2) {
+            font-size: 0.98rem;
+            color: #4a1525;
+            font-weight: 400;
+            margin: 0 0 22px 0;
+            text-align: center;
+        }
+
+        .message-container p:nth-of-type(3) {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-style: italic;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #881337;
+            margin: 0;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(157, 23, 77, 0.35);
+        }
+
+        /* --- Custom Pink Music Player Widget --- */
+        .music-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 5px 20px rgba(164, 19, 60, 0.2);
+            border: 2px solid rgba(255, 77, 109, 0.3);
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .music-player.visible {
+            opacity: 1;
+        }
+
+        .album-art {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff4d6d, #9d174d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: spin 4s linear infinite paused;
+            box-shadow: 0 2px 8px rgba(164, 19, 60, 0.3);
+        }
+
+        .music-player.playing .album-art {
+            animation-play-state: running;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .album-art span {
+            font-size: 16px;
+        }
+
+        .song-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .song-title {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #9d174d;
+        }
+
+        .song-artist {
+            font-size: 0.7rem;
+            color: #666;
+        }
+
+        .play-btn {
+            background: #ff4d6d;
+            border: none;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            transition: background 0.2s, transform 0.2s;
+            box-shadow: 0 2px 6px rgba(255, 77, 109, 0.4);
+        }
+
+        .play-btn:hover {
+            background: #c9184a;
+            transform: scale(1.08);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .main-wrapper {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .side-decorations {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .side-image {
+                width: 90px;
+            }
+
+            .paper-background {
+                padding: 20px 15px;
+                min-height: auto;
+            }
+
+            .message-container {
+                padding: 20px 15px;
+            }
+
+            .message-container h3 {
+                font-size: 1.6rem;
+            }
+
+            .message-container p:nth-of-type(2) {
+                font-size: 0.92rem;
+            }
+
+            .music-player {
+                bottom: 10px;
+                right: 10px;
+                left: 10px;
+                justify-content: space-between;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Hearts Layer -->
+    <div class="hearts-container">
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+        <div class="heart"></div>
+    </div>
+
+    <!-- Audio element para kay Taylor Swift (Enchanted) -->
+    <audio id="bg-music" loop>
+        <!-- Maaari mong palitan ang src ng tamang filename o URL ng kanta kung mayroon kang local file -->
+        <source src="media/Enchanted-Taylor Swift.mp3.mp3" type="audio/mp3">
+        Your browser does not support the audio element.
+    </audio>
+
+    <!-- 1. Opening Screen (Sobre) -->
+    <div id="opening-screen">
+        <a onclick="openLetter()" class="envelope-link">
+            <img src="media/Tulips and Message.png" alt="Buksan ang Liham">
+        </a>
+        <div class="tap-instruction">💌 Click the Envelope to Open the Message 💌</div>
+    </div>
+
+    <!-- 2. Letter Screen -->
+    <div id="letter-screen">
+        <div class="main-wrapper">
+            
+            <!-- Left Side Images -->
+            <div class="side-decorations">
+                <img src="media/Cute Kitten Tulips.png" alt="Cute Kitten" class="side-image">
+                <img src="media/Bouqet Tulips.png" alt="Bouquet Tulips" class="side-image">
+            </div>
+
+            <!-- Center Paper Note -->
+            <div class="paper-background">
+                <div class="message-container">
+                    <h3>My Dearest Liah</h3> 
+                    <p>Happy 3 Years and 6 Months Anniversary.</p>
+                    <p>My love, first of all, thank you so much for always being by my side whenever I need you. I'm really sorry for all my shortcomings and for the times I gave you a hard time over nonsense things. I deeply regret my mistakes, and I'm here ready to make it up to you. If you ever have a problem you're shy to share, don't be afraid to tell me, okay? I love you so much and I miss you, my love.</p>
+                    <p>Always yours, Denvie :&gt;</p>
+                </div>
+            </div>
+
+            <!-- Right Side Image -->
+            <div class="side-decorations">
+                <img src="media/Denvie Alliah.png" alt="Denvie & Alliah" class="side-image">
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Custom Designed Music Player Widget (Lilitaw pagbukas ng liham) -->
+    <div id="music-widget" class="music-player">
+        <div class="album-art">
+            <span>💖</span>
+        </div>
+        <div class="song-info">
+            <div class="song-title">Enchanted</div>
+            <div class="song-artist">Taylor Swift</div>
+        </div>
+        <button id="play-pause-btn" class="play-btn" onclick="togglePlay()">⏸</button>
+    </div>
+
+    <!-- JavaScript para sa Transition at Audio Playback -->
+    <script>
+        const music = document.getElementById('bg-music');
+        const playerWidget = document.getElementById('music-widget');
+        const playBtn = document.getElementById('play-pause-btn');
+
+        function openLetter() {
+            const opening = document.getElementById('opening-screen');
+            const letter = document.getElementById('letter-screen');
+
+            // I-play ang kanta ni Taylor Swift nang auto-play pagka-click ng sobre
+            music.play().then(() => {
+                playerWidget.classList.add('playing');
+                playBtn.textContent = '⏸';
+            }).catch(error => {
+                console.log("Audio autoplay restricted or failed:", error);
+            });
+
+            // Ipakita ang music player widget
+            playerWidget.classList.add('visible');
+
+            // Fade out ang opening screen at i-reveal ang sulat
+            opening.style.opacity = '0';
+            opening.style.transform = 'scale(0.95)';
+            
+            setTimeout(() => {
+                opening.style.display = 'none';
+                letter.style.display = 'flex';
+                setTimeout(() => {
+                    letter.style.opacity = '1';
+                }, 50);
+            }, 400);
+        }
+
+        // Pindutan para i-pause o i-play ang kanta kung gusto nila itong ihinto
+        function togglePlay() {
+            if (music.paused) {
+                music.play();
+                playerWidget.classList.add('playing');
+                playBtn.textContent = '⏸';
+            } else {
+                music.pause();
+                playerWidget.classList.remove('playing');
+                playBtn.textContent = '▶';
+            }
+        }
+    </script>
+
+</body>
+</html>
